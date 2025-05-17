@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Available Inventory | ENS Packaging Solution</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #000;
+      color: #b8860b; /* dark gold */
+    }
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #b8860b;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+      letter-spacing: 2px;
+    }
+    nav {
+      text-align: center;
+      background-color: #222;
+      padding: 10px 0;
+    }
+    nav a {
+      color: #b8860b;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+    .section {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .product {
+      border: 1px solid #b8860b;
+      padding: 15px;
+      margin-bottom: 20px;
+      background-color: #111;
+    }
+    .product h2 {
+      margin: 0 0 10px;
+    }
+    .product-status {
+      font-style: italic;
+      color: #88ff88;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #111;
+      border-top: 2px solid #b8860b;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Stock List</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Stock List</a>
+	<a href="contact.html">Contact Us</a>
+  </nav>
+
+  <div class="section" id="inventory">
+    <h2>Current Product Listings</h2>
+    <div id="productList">Loading products...</div>
+  </div>
+
+  <footer>
+    &copy; 2025 ENS Packaging Solution – All rights reserved
+  </footer>
+
+  <script>
+    const SHEET_URL = 'https://corsproxy.io/?https://docs.google.com/spreadsheets/d/e/2PACX-1vTPvII7C7oIVLVGE-MYNUKAHvrzipDp13jxhiA8vSqhHgxSwQqQ2dmowgiarc7aRAsY1dfu09ybT-N1/pub?output=csv';
+
+    fetch(SHEET_URL)
+      .then(response => response.text())
+      .then(data => {
+        const rows = data.split('\n').slice(1);
+        const container = document.getElementById('productList');
+        container.innerHTML = '';
+
+        rows.forEach(row => {
+          const cols = row.split(',');
+          if (cols.length < 3) return; // Skip malformed rows
+
+          const name = cols[0];
+          const desc = cols[1];
+          const status = cols[2];
+
+          const productHTML = `
+            <div class="product">
+              <h2>${name}</h2>
+              <p>${desc}</p>
+              <p class="product-status">Status: ${status}</p>
+            </div>
+          `;
+
+          container.innerHTML += productHTML;
+        });
+      })
+      .catch(err => {
+        document.getElementById('productList').innerText = 'Failed to load products. Please try again later.';
+        console.error('Error loading sheet:', err);
+      });
+  </script>
+</body>
+</html>
